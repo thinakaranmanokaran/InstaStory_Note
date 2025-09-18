@@ -1,14 +1,35 @@
 {
-  "name": "story-note",
+  "name": "instastory-note",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "description": "Create and download aesthetic quote images for Instagram Stories, WhatsApp Status, and more. Built with React + Tailwind CSS.",
+  "author": "Thinakaran Manokaran (https://thinakaran.dev)",
+  "license": "MIT",
+  "homepage": "https://thinakaranmanokaran.github.io/InstaStory_Note/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinakaranmanokaran/InstaStory_Note.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thinakaranmanokaran/InstaStory_Note/issues"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
+  "keywords": [
+    "quote generator",
+    "story note",
+    "insta story maker",
+    "whatsapp status quotes",
+    "quote image download",
+    "react quote app",
+    "tailwind css project",
+    "InstaStory Note"
+  ],
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
     "framer-motion": "^12.23.13",
