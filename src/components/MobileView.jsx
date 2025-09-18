@@ -3,6 +3,69 @@ import { motion, AnimatePresence } from "framer-motion";
 import Wallpaper from "../dataset/Wallpaper";
 
 const Editor = ({ selectedImage, onClose, quote, setQuote, textColor, setTextColor }) => {
+    const handleAddToStory = async () => {
+        if (!quote.trim()) {
+            alert("Please add a quote first!");
+            return;
+        }
+
+        // Create canvas to overlay quote on image
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+        img.crossOrigin = "anonymous"; // In case of CORS issues with images
+
+        img.onload = async () => {
+            // Set canvas size to match image (adjust aspect ratio if needed)
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Draw the background image
+            ctx.drawImage(img, 0, 0);
+
+            // Style and draw the quote text (centered, semi-transparent background for readability)
+            ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // Semi-transparent black bg for text
+            ctx.fillRect(0, canvas.height / 2 - 60, canvas.width, 120); // Bg rectangle behind text
+
+            ctx.fillStyle = textColor;
+            ctx.font = "bold 48px sans-serif"; // Large, bold font (adjust size as needed)
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(quote, canvas.width / 2, canvas.height / 2);
+
+            // Convert canvas to blob file
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], "quote-story.png", { type: "image/png" });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: "Share to Instagram Story",
+                            text: quote, // Optional: Pre-fill text if supported
+                        });
+                    } catch (error) {
+                        if (error.name !== "AbortError") {
+                            console.error("Share failed:", error);
+                            alert("Sharing failed. Try saving the image and sharing manually.");
+                        }
+                    }
+                } else {
+                    // Fallback: Download the image
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "quote-story.png";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    alert("Image downloaded! Open it and share to Instagram Stories manually.");
+                }
+            }, "image/png");
+        };
+
+        img.src = selectedImage;
+    };
+
     return (
         <AnimatePresence>
             {selectedImage && (
@@ -10,7 +73,8 @@ const Editor = ({ selectedImage, onClose, quote, setQuote, textColor, setTextCol
                     className="fixed inset-0 z-20 flex items-center justify-center bg-black/70"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }} transition={{ duration: 0.7 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.7 }}
                 >
                     {/* Background image */}
                     <motion.div
@@ -61,8 +125,8 @@ const Editor = ({ selectedImage, onClose, quote, setQuote, textColor, setTextCol
                                 Close
                             </button>
                             <button
-                                onClick={onClose}
-                                className="px-3 py-2 bg-dark text-white rounded-xl text-sm shadow  transition"
+                                onClick={handleAddToStory}
+                                className="px-3 py-2 bg-dark text-white rounded-xl text-sm shadow transition"
                             >
                                 Add to Story
                             </button>
